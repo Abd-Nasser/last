@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dashboard</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js" integrity="sha512-zO8oeHCxetPn1Hd9PdDleg5Tw1bAaP0YmNvPY8CwcRyUk7d7/+nyElmFrB6f7vg4f7Fv4sui1mcep8RIEShczg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <body class="bg-danger-subtle">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h1 class="text-black">Dashboard - {{ page_labels }}</h1>
+                    <a href="{% url 'bord' param_days=7 param_devises=url_param %}" class="btn {% if page_labels == 'Semaine' %}btn-light{% else %}btn-secondary{% endif %}">Semaine</a>
+                    <a href="{% url 'bord' param_days=30 param_devises=url_param %}" class="btn {% if page_labels == 'Mois' %}btn-light{% else %}btn-secondary{% endif %}">Mois</a>
+                    <a href="{% url 'bord' param_days=365 param_devises=url_param %}" class="btn {% if page_labels == 'Année' %}btn-light{% else %}btn-secondary{% endif %}">Année</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                {% for keys, value in devises_data.items %}
+                <div class="col-md-10 col-lg-6 bg-dark">
+                    <canvas id="chart-{keys}"></canvas>
+               </div>
+                {% endfor %}
+            </div>
+        </div>
+        <script>
+            {% for keys, value in devises_data.items %}
+                var ctx = document.getElementById("chart-{keys}");
+                new Chart(ctx, {
+                                 type:'line',
+                                 data:{
+                                        labels:{{ days_data|safe }},
+                                        datasets:[{
+                                                    label:"{{ keys }}",
+                                                    data:{{ value|safe }},
+                                                    fill: true,
+                                                    borderColor: 'rgb(210, 77, 77)'
+                                        }]
+                                 }
+
+                            });
+            {% endfor %}
+        </script>
+
+    </body>
+</html>
